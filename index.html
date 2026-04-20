@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yashni Creators | Premium Indian Ethnic Wear</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --maroon: #5C162E;
+            --gold: #D4AF37;
+            --light-gold: #F3E5AB;
+            --cream: #FCF9F2;
+            --dark: #2A2A2A;
+            --sale-red: #D32F2F;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--cream); color: var(--dark); font-family: 'Montserrat', sans-serif; overflow-x: hidden; }
+
+        /* Header */
+        header {
+            background-color: #ffffff;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(92, 22, 46, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid var(--light-gold);
+        }
+
+        /* Animated Logo */
+        .brand-container { text-align: center; text-decoration: none; display: flex; flex-direction: column; align-items: center;}
+        .brand-name {
+            font-family: 'Great Vibes', cursive;
+            font-size: 50px;
+            line-height: 1;
+            background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FCF6BA, #BF953F);
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: shine 4s linear infinite;
+            padding-right: 10px;
+        }
+        @keyframes shine { to { background-position: 200% center; } }
+
+        .brand-sub { 
+            font-family: 'Montserrat', sans-serif; font-size: 10px; letter-spacing: 7px; color: var(--maroon); 
+            text-transform: uppercase; margin-top: -5px; font-weight: 500;
+        }
+        
+        nav a { 
+            margin-left: 35px; text-decoration: none; color: var(--maroon); 
+            font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px;
+            font-weight: 500; transition: 0.3s;
+        }
+        nav a:hover { color: var(--gold); }
+
+        /* Hero Section */
+        .hero {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 60px 10%;
+            min-height: 90vh;
+            background: radial-gradient(circle at center, #ffffff 0%, var(--cream) 100%);
+        }
+        
+        .hero-text { flex: 1; padding-right: 50px; }
+        .hero-text h4 { color: var(--gold); font-size: 1rem; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 15px; }
+        .hero-text h1 { font-family: 'Playfair Display', serif; font-size: 4rem; color: var(--maroon); line-height: 1.1; margin-bottom: 25px; }
+        .hero-text p { font-size: 1.1rem; color: #555; margin-bottom: 35px; line-height: 1.6; }
+        
+        .shop-now-btn {
+            background-color: var(--maroon); color: white; padding: 15px 40px; text-decoration: none;
+            text-transform: uppercase; letter-spacing: 2px; font-size: 13px; border: 1px solid var(--maroon); transition: 0.4s;
+        }
+        .shop-now-btn:hover { background-color: var(--cream); color: var(--maroon); }
+
+        /* Arch Image */
+        .hero-image-wrapper { flex: 1; display: flex; justify-content: center; }
+        .arch-image {
+            width: 100%; max-width: 450px; height: 600px; object-fit: cover;
+            border-top-left-radius: 250px; border-top-right-radius: 250px;
+            border: 12px solid white; box-shadow: 0 20px 40px rgba(92, 22, 46, 0.15);
+            outline: 2px solid var(--gold); outline-offset: -10px;
+            background-color: #EAEAEA; /* Fallback for blank image */
+        }
+
+        /* Product Grid */
+        .container { max-width: 1300px; margin: 80px auto; padding: 0 20px; }
+        .section-title { text-align: center; font-family: 'Playfair Display', serif; font-size: 2.8rem; color: var(--maroon); margin-bottom: 20px; }
+        .section-divider { width: 80px; height: 3px; background-color: var(--gold); margin: 0 auto 60px auto; }
+
+        #product-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 40px; }
+
+        .product-card {
+            background: white; padding: 15px; border-radius: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+            transition: 0.3s; position: relative;
+        }
+        .product-card:hover { box-shadow: 0 15px 30px rgba(92, 22, 46, 0.1); transform: translateY(-5px); }
+        
+        .image-box { position: relative; overflow: hidden; background-color: #f4f4f4;}
+        .product-image { width: 100%; height: 400px; object-fit: cover; }
+        
+        /* ORDER NOW Button */
+        .quick-add {
+            position: absolute; bottom: -50px; left: 50%; transform: translateX(-50%);
+            width: 80%; background: rgba(255, 255, 255, 0.95); color: var(--maroon);
+            padding: 12px 0; text-align: center; text-decoration: none; font-weight: 600;
+            text-transform: uppercase; font-size: 13px; letter-spacing: 1.5px;
+            border: 1px solid var(--maroon); opacity: 0; transition: 0.4s ease;
+        }
+        .product-card:hover .quick-add { bottom: 20px; opacity: 1; }
+        .quick-add:hover { background: var(--maroon); color: white; }
+
+        /* Badges (Sale & Bestseller) */
+        .badge {
+            position: absolute; top: 10px; left: 10px; padding: 5px 12px; font-size: 10px;
+            text-transform: uppercase; letter-spacing: 1px; font-weight: bold; z-index: 2;
+        }
+        .badge-sale { background: var(--sale-red); color: white; }
+        .badge-normal { background: var(--gold); color: white; }
+
+        .product-info { padding-top: 20px; text-align: center; }
+        .product-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--dark); margin-bottom: 8px; }
+        
+        /* Pricing logic */
+        .price-wrapper { display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .product-price { font-size: 1.2rem; color: var(--maroon); font-weight: 600; }
+        .old-price { font-size: 0.9rem; color: #999; text-decoration: line-through; }
+
+        /* --- CHATBOT STYLES --- */
+        .chatbot-container { position: fixed; bottom: 30px; right: 30px; z-index: 9999; }
+        
+        .chat-btn {
+            width: 60px; height: 60px; border-radius: 50%; background: var(--maroon); color: white;
+            display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(92, 22, 46, 0.4); border: 2px solid var(--gold); transition: 0.3s;
+        }
+        .chat-btn:hover { transform: scale(1.1); }
+
+        .chat-window {
+            position: absolute; bottom: 80px; right: 0; width: 320px; background: white;
+            border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 1px solid #eee;
+            display: none; flex-direction: column; overflow: hidden; transform-origin: bottom right;
+        }
+        .chat-window.active { display: flex; animation: chatPopUp 0.3s ease-out forwards; }
+        
+        @keyframes chatPopUp { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .chat-header {
+            background: var(--maroon); color: white; padding: 15px; font-family: 'Playfair Display', serif;
+            font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center;
+        }
+        .close-chat { cursor: pointer; font-family: sans-serif; font-size: 18px; }
+        
+        .chat-body { padding: 20px; height: 280px; overflow-y: auto; background: var(--cream); font-size: 13px; color: #444; }
+        .bot-msg { background: white; padding: 12px; border-radius: 8px; border-bottom-left-radius: 0; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border: 1px solid #eee; line-height: 1.5; }
+        
+        .chat-input { display: flex; border-top: 1px solid #eee; }
+        .chat-input input { flex: 1; padding: 15px; border: none; outline: none; font-family: 'Montserrat', sans-serif; font-size: 13px; }
+        .chat-input button { padding: 0 20px; background: white; color: var(--maroon); border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 12px;}
+
+        @media (max-width: 900px) {
+            .hero { flex-direction: column; text-align: center; padding: 40px 5%; }
+            .hero-text { padding-right: 0; margin-bottom: 50px; }
+            .hero-text h1 { font-size: 3rem; }
+            header { flex-direction: column; gap: 15px; }
+            nav a { margin: 0 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="#" class="brand-container">
+            <span class="brand-name">Yashni</span>
+            <span class="brand-sub">Creators</span>
+        </a>
+        <nav>
+            <a href="#">New Arrivals</a>
+            <a href="#">Festive Suits</a>
+            <a href="#">Sale Offers</a>
+        </nav>
+    </header>
+
+    <div class="hero">
+        <div class="hero-text" data-aos="fade-right" data-aos-duration="1200">
+            <h4>The Royal Collection</h4>
+            <h1>Elegance Woven<br>in Tradition</h1>
+            <p>Discover our exclusive range of handcrafted Indian suits and contemporary cord sets designed for the modern ethnic wardrobe.</p>
+            <a href="#product-container" class="shop-now-btn">Order Now</a>
+        </div>
+        <div class="hero-image-wrapper" data-aos="fade-left" data-aos-duration="1200">
+            <img src="https://placehold.co/800x1200/F4F1EA/5C162E?text=Hero+Image\n(Upload+Real+Photo+Here)" alt="Hero Image" class="arch-image">
+        </div>
+    </div>
+
+    <div class="container">
+        <h2 class="section-title" data-aos="fade-up">Trending & Offers</h2>
+        <div class="section-divider" data-aos="fade-up"></div>
+        
+        <div id="product-container"></div>
+    </div>
+
+    <div class="chatbot-container">
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <span>✨ Yashni Assistant</span>
+                <span class="close-chat" onclick="toggleChat()">✖</span>
+            </div>
+            <div class="chat-body" id="chatBody">
+                <div class="bot-msg">Namaste! Welcome to Yashni Creators. 🙏</div>
+                <div class="bot-msg">How can I help you find the perfect Indian Suit or Cord Set today?</div>
+            </div>
+            <div class="chat-input">
+                <input type="text" placeholder="Type your message..." id="chatInput">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+        <div class="chat-btn" onclick="toggleChat()">
+            💬
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Initialize Animations
+        AOS.init({ once: true, offset: 50 });
+
+        // Product Database (With Blank Image Placeholders, Sale Prices & Badges)
+        const products = [
+            {
+                name: "Zari Work Silk Anarkali",
+                price: "4,599",
+                oldPrice: null, // No sale
+                img: "https://placehold.co/600x800/EAEAEA/5C162E?text=Product+1",
+                badge: "Bestseller",
+                badgeType: "badge-normal"
+            },
+            {
+                name: "Maroon Velvet Cord Set",
+                price: "2,299",
+                oldPrice: "2,899", // On Sale
+                img: "https://placehold.co/600x800/EAEAEA/5C162E?text=Product+2",
+                badge: "SALE 20% OFF",
+                badgeType: "badge-sale"
+            },
+            {
+                name: "Chanderi Embroidered Suit",
+                price: "3,849",
+                oldPrice: null,
+                img: "https://placehold.co/600x800/EAEAEA/5C162E?text=Product+3",
+                badge: "",
+                badgeType: ""
+            },
+            {
+                name: "Festive Brocade Lehenga",
+                price: "4,999",
+                oldPrice: "6,499", // On Sale
+                img: "https://placehold.co/600x800/EAEAEA/5C162E?text=Product+4",
+                badge: "CLEARANCE SALE",
+                badgeType: "badge-sale"
+            }
+        ];
+
+        // Render Products
+        const container = document.getElementById('product-container');
+        container.innerHTML = products.map((p, index) => {
+            
+            // Check if product is on sale to show old price
+            let priceHtml = `<div class="product-price">₹${p.price}</div>`;
+            if(p.oldPrice) {
+                priceHtml = `
+                    <div class="price-wrapper">
+                        <span class="old-price">₹${p.oldPrice}</span>
+                        <span class="product-price">₹${p.price}</span>
+                    </div>
+                `;
+            }
+
+            return `
+            <div class="product-card" data-aos="fade-up" data-aos-delay="${index * 100}">
+                <div class="image-box">
+                    ${p.badge ? `<span class="badge ${p.badgeType}">${p.badge}</span>` : ''}
+                    <img src="${p.img}" class="product-image" alt="Blank Product Placeholder">
+                    <a href="#" class="quick-add">Order Now</a>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-title">${p.name}</h3>
+                    ${priceHtml}
+                </div>
+            </div>
+            `;
+        }).join('');
+
+        // --- CHATBOT LOGIC ---
+        function toggleChat() {
+            const chatWindow = document.getElementById('chatWindow');
+            chatWindow.classList.toggle('active');
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if(message === '') return;
+
+            const chatBody = document.getElementById('chatBody');
+            
+            // Add User Message
+            chatBody.innerHTML += `<div class="bot-msg" style="background: var(--light-gold); text-align: right; margin-left: 20px;">${message}</div>`;
+            input.value = '';
+            chatBody.scrollTop = chatBody.scrollHeight;
+
+            // Simulate Bot Reply
+            setTimeout(() => {
+                chatBody.innerHTML += `<div class="bot-msg">Thanks for reaching out! Our styling team will assist you shortly regarding your order.</div>`;
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }, 1000);
+        }
+
+        // Allow sending message with Enter key
+        document.getElementById('chatInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
