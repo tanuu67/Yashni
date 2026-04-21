@@ -45,10 +45,7 @@
             transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
         }
         .preloader-brand { animation: pulseGlow 2s infinite alternate ease-in-out; text-align: center; }
-        
-        /* Preloader Logo Size Increased Drastically */
         .preloader-brand img { height: 180px; width: auto; object-fit: contain; mix-blend-mode: multiply; }
-        
         .preloader-text { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--green); letter-spacing: 4px; margin-top: 15px; text-transform: uppercase; font-weight: 600;}
         @keyframes pulseGlow { 0% { transform: scale(0.98); opacity: 0.9; } 100% { transform: scale(1.02); opacity: 1; } }
 
@@ -75,8 +72,6 @@
 
         .center-brand { text-align: center; flex: 1; display: flex; justify-content: center; align-items: center; }
         .logo-wrapper { position: relative; display: inline-block; overflow: hidden; padding: 0; }
-        
-        /* Main Header Logo Size Increased Drastically */
         .logo-img { height: 85px; width: auto; display: block; object-fit: contain; mix-blend-mode: multiply;}
 
         /* --- COMPACT E-COMMERCE GRID --- */
@@ -99,7 +94,6 @@
         .wishlist-btn { position: absolute; top: 8px; right: 8px; background: rgba(255,255,255,0.9); width: 28px; height: 28px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 14px; color: #aaa; z-index: 2; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
         .wishlist-btn:hover { color: var(--discount-red); transform: scale(1.1); }
         
-        /* Offer Banner */
         .offer-banner {
             position: absolute; bottom: 0; left: 0; width: 100%;
             background: rgba(255, 255, 255, 0.9); color: var(--discount-red);
@@ -107,9 +101,7 @@
             text-transform: uppercase; border-top: 1px solid rgba(0,0,0,0.05);
         }
 
-        /* Compact Card Details */
         .card-details { padding: 10px; display: flex; flex-direction: column; gap: 4px; }
-        
         .product-title { color: #555; font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: capitalize; }
         
         .price-row { display: flex; align-items: baseline; gap: 6px; margin-top: 2px;}
@@ -121,9 +113,11 @@
         .rating { background: var(--green); color: var(--white); font-size: 9px; font-weight: 600; padding: 2px 5px; border-radius: 2px; display: inline-flex; align-items: center; gap: 3px; }
         .rating svg { width: 8px; height: 8px; fill: var(--white); }
         
+        /* Updated Button CSS to support <button> tag */
         .buy-now { 
             background: var(--white); color: var(--green); padding: 4px 10px; border: 1px solid #ddd; 
-            font-size: 9px; font-weight: 600; text-transform: uppercase; text-decoration: none; border-radius: 2px; transition: 0.2s ease;
+            font-size: 9px; font-weight: 600; text-transform: uppercase; text-decoration: none; border-radius: 2px; 
+            transition: 0.2s ease; cursor: pointer; font-family: inherit;
         }
         .card:hover .buy-now { border-color: var(--green); background: var(--green); color: var(--white); }
 
@@ -142,16 +136,12 @@
         .floating-wa { position: fixed; bottom: 20px; left: 20px; z-index: 9999; background: #25D366; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; text-decoration: none; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4); transition: 0.3s ease; }
         .floating-wa:hover { transform: translateY(-3px); }
 
-        /* MOBILE RESPONSIVE */
         @media (max-width: 1200px) { .lookbook-container { grid-template-columns: repeat(4, 1fr); } }
         @media (max-width: 900px) { .lookbook-container { grid-template-columns: repeat(3, 1fr); } }
         @media (max-width: 600px) { 
             .lookbook-container { grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 0 8px; margin: 15px auto 40px;}
             header { padding: 8px; } .nav-links { gap: 10px; } header a { font-size: 10px; }
-            
-            /* Mobile Header Logo Size Increased Drastically */
             .logo-img { height: 60px; } 
-            
             .card-details { padding: 8px; gap: 3px; }
             .product-title { font-size: 11px; }
             .current-price { font-size: 13px; } .old-price { font-size: 10px; } .discount { font-size: 10px; }
@@ -189,9 +179,9 @@
             
             <div class="nav-links right">
                 <a href="complaint.html">Support</a>
-                <a href="#" class="cart-btn">
+                <a href="cart.html" class="cart-btn">
                     🛒
-                    <span class="cart-badge">2</span>
+                    <span class="cart-badge" id="cartBadge">0</span>
                 </a>
             </div>
         </header>
@@ -220,7 +210,40 @@
 
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
+    // --- CART LOGIC START ---
+    function updateCartBadge() {
+        let cart = JSON.parse(localStorage.getItem('yashni_cart')) || [];
+        document.getElementById('cartBadge').innerText = cart.length;
+    }
+
+    function addToCart(btn, id) {
+        let title = btn.getAttribute('data-title');
+        let price = btn.getAttribute('data-price');
+        let img = btn.getAttribute('data-img');
+        
+        let cart = JSON.parse(localStorage.getItem('yashni_cart')) || [];
+        
+        // Save product in cart
+        cart.push({ id: id, title: title, price: price, image: img, quantity: 1 });
+        localStorage.setItem('yashni_cart', JSON.stringify(cart));
+        
+        updateCartBadge(); // Update top badge
+        
+        // Change button to "Go to Cart"
+        btn.innerText = "Go to Cart";
+        btn.style.backgroundColor = "var(--gold)";
+        btn.style.color = "var(--green)";
+        btn.style.borderColor = "var(--gold)";
+        
+        // Change click action to redirect to cart page
+        btn.onclick = function() {
+            window.location.href = "cart.html";
+        };
+    }
+    // --- CART LOGIC END ---
+
     window.addEventListener('load', function() {
+        updateCartBadge(); // Load cart number on start
         setTimeout(function() {
             var preloader = document.getElementById('preloader');
             var mainSite = document.getElementById('mainSite');
@@ -240,10 +263,13 @@
             const products = response.items;
             const grid = document.getElementById('grid');
 
+            // Get current cart to check if items are already added
+            let cart = JSON.parse(localStorage.getItem('yashni_cart')) || [];
+
             grid.innerHTML = products.map((prod, index) => {
+                const prodId = prod.sys.id; // Unique ID from Contentful
                 const title = prod.fields.title || 'Exclusive Product'; 
                 const price = prod.fields.price || '₹0';
-                const buyLink = prod.fields.buyLink || '#';
                 
                 const oldPrice = '₹' + (parseInt(price.replace(/[^0-9]/g, '')) + 1200); 
                 const rating = '4.' + Math.floor(Math.random() * 5 + 1); 
@@ -251,6 +277,21 @@
                 let imageUrl = 'https://placehold.co/400x600/f5f5f5/cccccc?text=Yashni';
                 if(prod.fields.image && prod.fields.image.fields.file) {
                     imageUrl = 'https:' + prod.fields.image.fields.file.url;
+                }
+
+                // Safe title for HTML attribute
+                const safeTitle = title.replace(/"/g, '&quot;');
+
+                // Checking if this product is already in the cart
+                let isAlreadyInCart = cart.some(item => item.id === prodId);
+                let buttonHtml = '';
+
+                if (isAlreadyInCart) {
+                    // Agar pehle se cart mein hai, toh seedha 'Go to Cart' dikhao
+                    buttonHtml = `<button onclick="window.location.href='cart.html'" class="buy-now" style="background: var(--gold); color: var(--green); border-color: var(--gold);">Go to Cart</button>`;
+                } else {
+                    // Agar cart mein nahi hai, toh 'Add to Cart' dikhao
+                    buttonHtml = `<button onclick="addToCart(this, '${prodId}')" data-title="${safeTitle}" data-price="${price}" data-img="${imageUrl}" class="buy-now">Add to Cart</button>`;
                 }
 
                 return `
@@ -269,7 +310,7 @@
                         </div>
                         <div class="bottom-row">
                             <div class="rating">${rating} <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg></div>
-                            <a href="${buyLink}" target="_blank" class="buy-now">Buy</a>
+                            ${buttonHtml}
                         </div>
                     </div>
                 </div>
