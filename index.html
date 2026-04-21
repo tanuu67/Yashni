@@ -51,22 +51,14 @@
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
         }
-        .preloader-brand { text-align: center; }
+        .preloader-brand { animation: pulseGlow 2s infinite alternate ease-in-out; text-align: center; }
+        .preloader-brand img { height: 100px; width: auto; object-fit: contain; }
+        .preloader-text { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--gold); letter-spacing: 2px; margin-top: 15px; }
         
-        /* Premium Text Logo for Preloader */
-        .preloader-text-logo {
-            font-family: 'Playfair Display', serif; font-size: 32px; color: var(--green); letter-spacing: 2px;
-            display: flex; flex-direction: column; align-items: center; gap: 5px;
+        @keyframes pulseGlow {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            100% { transform: scale(1.05); opacity: 1; filter: drop-shadow(0 0 10px rgba(197, 160, 89, 0.4)); }
         }
-        .preloader-text-logo .p { position: relative; display: inline-block; overflow: hidden;}
-        .preloader-text-logo span { font-family: 'Montserrat', sans-serif; font-size: 14px; color: var(--gold); text-transform: uppercase; font-weight: 400; letter-spacing: 5px; margin-top: 5px; display: block; }
-        
-        .logo-wrapper::after {
-            content: ''; position: absolute; top: 0; left: -150%; width: 50%; height: 100%;
-            background: linear-gradient(to right, rgba(197,160,89,0) 0%, rgba(197,160,89,0.3) 50%, rgba(197,160,89,0) 100%);
-            transform: skewX(-25deg); animation: shine-sweep 6s infinite ease-out;
-        }
-        @keyframes shine-sweep { 0% { left: -150%; } 20% { left: 200%; } 100% { left: 200%; } }
 
         .site-content { opacity: 0; transform: translateY(20px); transition: opacity 1s cubic-bezier(0.23, 1, 0.32, 1), transform 1s cubic-bezier(0.23, 1, 0.32, 1); }
         .site-content.loaded { opacity: 1; transform: translateY(0); }
@@ -85,14 +77,17 @@
         header .header-wa-btn { background: #25D366; color: white !important; padding: 8px 15px; border-radius: 20px; font-size: 11px; }
         header .header-wa-btn:hover { background: #128C7E; color: white !important; }
 
-        /* Premium Text Logo for Header */
-        header .center-brand { text-align: center; flex: 1; display: flex; justify-content: center; align-items: center; }
-        header .logo-wrapper { position: relative; display: flex; flex-direction: column; align-items: center; overflow: hidden; padding: 2px 5px; gap: 2px;}
-        header .logo-wrapper p { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--white); letter-spacing: 1px;}
-        header .logo-wrapper span { font-family: 'Montserrat', sans-serif; font-size: 10px; color: var(--white); text-transform: uppercase; font-weight: 400; letter-spacing: 4px; display: block; opacity: 0.8; }
+        /* ORIGINAL IMAGE LOGO */
+        .center-brand { text-align: center; flex: 1; display: flex; justify-content: center; align-items: center; }
+        .logo-wrapper { position: relative; display: inline-block; overflow: hidden; border-radius: 4px; background: white; padding: 2px 10px; }
+        .logo-img { height: 60px; width: auto; display: block; object-fit: contain; }
         
-        /* Subtler shine for header logo */
-        header .logo-wrapper::after { background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%); animation: shine-sweep 12s infinite ease-out; }
+        .logo-wrapper::after {
+            content: ''; position: absolute; top: 0; left: -150%; width: 50%; height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(-25deg); animation: shine-sweep 4s infinite;
+        }
+        @keyframes shine-sweep { 0% { left: -150%; } 20% { left: 200%; } 100% { left: 200%; } }
 
         /* --- MASONRY GRID --- */
         .lookbook-container { max-width: 1600px; margin: 40px auto; padding: 0 15px; column-count: 5; column-gap: 15px; transition: column-count 0.3s; }
@@ -150,7 +145,7 @@
         .developer-credit a { color: var(--gold); text-decoration: none; font-weight: 600; transition: 0.3s cubic-bezier(0.23, 1, 0.32, 1);}
         .developer-credit a:hover { color: var(--white); text-shadow: 0 0 8px rgba(197, 160, 89, 0.6); }
 
-        /* --- RESTORED CHATBOT & FLOATING BTN --- */
+        /* --- FLOATING WHATSAPP --- */
         .floating-wa { position: fixed; bottom: 30px; left: 30px; z-index: 9999; background: #25D366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; text-decoration: none; box-shadow: 0 5px 20px rgba(0,0,0,0.4); border: 2px solid white; transition: 0.3s cubic-bezier(0.23, 1, 0.32, 1); }
         .floating-wa:hover { transform: scale(1.1) translateY(-5px); }
 
@@ -162,8 +157,6 @@
             .card { margin-bottom: 8px; border-radius: 4px;}
             header { padding: 10px; } .nav-links { gap: 10px; } header a { font-size: 10px; margin-left: 0;}
             .header-wa-btn { padding: 6px 10px; font-size: 9px; } .logo-img { height: 45px; } .logo-wrapper { padding: 2px 5px; }
-            header .logo-wrapper p { font-size: 18px;}
-            header .logo-wrapper span { font-size: 8px; letter-spacing: 2px;}
             .floating-wa { width: 50px; height: 50px; font-size: 24px; bottom: 15px; left: 15px; }
             .card-overlay { padding: 15px 10px; gap: 4px;}
             .product-title { font-size: 14px; } .product-desc { font-size: 10px; } .price-tag { font-size: 13px; } .buy-now { padding: 4px 10px; font-size: 9px; } .wishlist-btn { width: 25px; height: 25px; font-size: 12px; }
@@ -174,10 +167,10 @@
 
     <div id="preloader">
         <div class="preloader-brand">
-            <div class="logo-wrapper preloader-text-logo">
-                <p class="p">Yashni</p>
-                <span>Creations</span>
+            <div class="logo-wrapper" style="background: none; border-radius: 0;">
+                <img src="Untitled.jpg" alt="Yashni Creations Logo" style="height: 100px;">
             </div>
+            <div class="preloader-text">Yashni Creations</div>
         </div>
     </div>
 
@@ -191,8 +184,7 @@
             
             <div class="center-brand">
                 <div class="logo-wrapper">
-                    <p>Yashni</p>
-                    <span>Creations</span>
+                    <img src="Untitled.jpg" class="logo-img" alt="Yashni Creations Logo">
                 </div>
             </div>
             
