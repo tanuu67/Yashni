@@ -46,10 +46,10 @@
         }
         .preloader-brand { animation: pulseGlow 2s infinite alternate ease-in-out; text-align: center; }
         
-        /* Preloader Logo Size Increased */
-        .preloader-brand img { height: 140px; width: auto; object-fit: contain; mix-blend-mode: multiply; }
+        /* Preloader Logo Size Increased Drastically */
+        .preloader-brand img { height: 180px; width: auto; object-fit: contain; mix-blend-mode: multiply; }
         
-        .preloader-text { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--green); letter-spacing: 3px; margin-top: 15px; text-transform: uppercase; font-weight: 600;}
+        .preloader-text { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--green); letter-spacing: 4px; margin-top: 15px; text-transform: uppercase; font-weight: 600;}
         @keyframes pulseGlow { 0% { transform: scale(0.98); opacity: 0.9; } 100% { transform: scale(1.02); opacity: 1; } }
 
         .site-content { opacity: 0; transform: translateY(15px); transition: opacity 1s ease, transform 1s ease; }
@@ -58,7 +58,7 @@
         /* --- HEADER --- */
         header {
             background: var(--white); 
-            padding: 12px 5%; display: flex; justify-content: space-between; align-items: center;
+            padding: 8px 5%; display: flex; justify-content: space-between; align-items: center;
             position: sticky; top: 0; z-index: 1000; 
             border-bottom: 1px solid #eaeaea;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
@@ -70,14 +70,14 @@
         
         .highlight-offer { color: var(--discount-red) !important; font-weight: 700 !important; }
         
-        .cart-btn { position: relative; display: flex; align-items: center; gap: 5px; font-size: 16px !important;}
-        .cart-badge { position: absolute; top: -6px; right: -10px; background: var(--discount-red); color: white; font-size: 9px; font-weight: 700; padding: 2px 5px; border-radius: 10px; line-height: 1;}
+        .cart-btn { position: relative; display: flex; align-items: center; gap: 5px; font-size: 18px !important;}
+        .cart-badge { position: absolute; top: -6px; right: -12px; background: var(--discount-red); color: white; font-size: 10px; font-weight: 700; padding: 2px 5px; border-radius: 10px; line-height: 1;}
 
         .center-brand { text-align: center; flex: 1; display: flex; justify-content: center; align-items: center; }
         .logo-wrapper { position: relative; display: inline-block; overflow: hidden; padding: 0; }
         
-        /* Main Header Logo Size Increased */
-        .logo-img { height: 65px; width: auto; display: block; object-fit: contain; mix-blend-mode: multiply;}
+        /* Main Header Logo Size Increased Drastically */
+        .logo-img { height: 85px; width: auto; display: block; object-fit: contain; mix-blend-mode: multiply;}
 
         /* --- COMPACT E-COMMERCE GRID --- */
         .lookbook-container { 
@@ -147,10 +147,10 @@
         @media (max-width: 900px) { .lookbook-container { grid-template-columns: repeat(3, 1fr); } }
         @media (max-width: 600px) { 
             .lookbook-container { grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 0 8px; margin: 15px auto 40px;}
-            header { padding: 10px 8px; } .nav-links { gap: 10px; } header a { font-size: 10px; }
+            header { padding: 8px; } .nav-links { gap: 10px; } header a { font-size: 10px; }
             
-            /* Mobile Header Logo Size Increased */
-            .logo-img { height: 48px; } 
+            /* Mobile Header Logo Size Increased Drastically */
+            .logo-img { height: 60px; } 
             
             .card-details { padding: 8px; gap: 3px; }
             .product-title { font-size: 11px; }
