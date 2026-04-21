@@ -38,10 +38,10 @@
             background-color: var(--white); 
             color: var(--green); 
             font-family: 'Montserrat', sans-serif;
-            overflow: hidden; /* Scroll locked until preloader finishes */
+            overflow: hidden; 
         }
 
-        /* --- 1. PURE CSS PRE-LOADER --- */
+        /* --- PURE CSS PRE-LOADER --- */
         #preloader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
             background: var(--white); z-index: 100000;
@@ -252,9 +252,7 @@
 
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
-    // ----------------------------------------------------
     // PRELOADER LOGIC
-    // ----------------------------------------------------
     window.addEventListener('load', function() {
         setTimeout(function() {
             var preloader = document.getElementById('preloader');
@@ -267,84 +265,64 @@
     });
 
     // ----------------------------------------------------
-    // CONTENTFUL API CONNECTION
+    // AAPKI CONTENTFUL KEYS YAHAN HAIN!
     // ----------------------------------------------------
-    // JAB AAP CONTENTFUL PAR ACCOUNT BANAYENGE, TOH APNI KEYS YAHAN DAALNI HAIN
-    const SPACE_ID = 'YAHAN_APNA_SPACE_ID_DAALEIN'; 
-    const ACCESS_TOKEN = 'YAHAN_APNA_ACCESS_TOKEN_DAALEIN';
+    const SPACE_ID = 'l2ejwf7j6w9f'; 
+    const ACCESS_TOKEN = 'Etivt-wjn21NJojQbh8TOPUBKbcNlwIEhgINXHQQLdE';
 
-    // Agar keys nahi daali hain, toh site crash na ho isliye dummy data dikhayenge
-    if(SPACE_ID === 'YAHAN_APNA_SPACE_ID_DAALEIN') {
-        showDummyData();
-    } else {
-        const client = contentful.createClient({
-            space: SPACE_ID,
-            accessToken: ACCESS_TOKEN
+    // Contentful setup
+    const client = contentful.createClient({
+        space: SPACE_ID,
+        accessToken: ACCESS_TOKEN
+        // Note: Agar preview token hai toh error na aaye isliye main ye line nahi daal raha. Delivery token lagana best hai.
+    });
+
+    client.getEntries({ content_type: 'product' }) 
+        .then((response) => {
+            const products = response.items;
+            const grid = document.getElementById('grid');
+            
+            if(products.length === 0) {
+                grid.innerHTML = '<p style="text-align:center; width:100%; padding: 40px; color:var(--green);">No products added yet. Please add products in Contentful!</p>';
+                return;
+            }
+
+            grid.innerHTML = products.map((prod, index) => {
+                // Ye wahi fields hain jo aapne Contentful mein banayi hain
+                const price = prod.fields.price || '₹0';
+                const buyLink = prod.fields.buyLink || '#';
+                
+                // Photo ka link safely nikalna
+                let imageUrl = 'https://placehold.co/400x600/FCF9F2/133D35?text=No+Image';
+                if(prod.fields.image && prod.fields.image.fields && prod.fields.image.fields.file) {
+                    imageUrl = 'https:' + prod.fields.image.fields.file.url;
+                }
+
+                return `
+                <div class="card" data-aos="fade-up" data-aos-offset="30" data-aos-delay="${(index % 5) * 50}">
+                    <div class="wishlist-btn">❤</div>
+                    <div class="img-box">
+                        <img src="${imageUrl}" alt="Yashni Collection">
+                    </div>
+                    <div class="card-overlay">
+                        <span class="price-tag">${price}</span>
+                        <a href="${buyLink}" target="_blank" style="text-decoration: none;">
+                            <span class="buy-now">Buy</span>
+                        </a>
+                    </div>
+                </div>
+                `;
+            }).join('');
+
+            // Animations chalu karna
+            AOS.init({ once: true, offset: 50, easing: 'ease-out-cubic', duration: 800 });
+        })
+        .catch((error) => {
+            console.error("Contentful Error:", error);
+            document.getElementById('grid').innerHTML = '<p style="text-align:center; width:100%; color:red;">Oops! Loading failed. Please check your API token.</p>';
         });
 
-        // Content_type ka naam wahi hona chahiye jo aapne Contentful mein rakha hai (jaise 'product')
-        client.getEntries({ content_type: 'product' }) 
-            .then((response) => {
-                const products = response.items;
-                const grid = document.getElementById('grid');
-
-                grid.innerHTML = products.map((prod, index) => {
-                    const price = prod.fields.price;
-                    const buyLink = prod.fields.buyLink;
-                    const imageUrl = 'https:' + prod.fields.image.fields.file.url; 
-
-                    return `
-                    <div class="card" data-aos="fade-up" data-aos-offset="30" data-aos-delay="${(index % 5) * 50}">
-                        <div class="wishlist-btn">❤</div>
-                        <div class="img-box">
-                            <img src="${imageUrl}" alt="Yashni Collection">
-                        </div>
-                        <div class="card-overlay">
-                            <span class="price-tag">${price}</span>
-                            <a href="${buyLink}" target="_blank" style="text-decoration: none;">
-                                <span class="buy-now">Buy</span>
-                            </a>
-                        </div>
-                    </div>
-                    `;
-                }).join('');
-
-                AOS.init({ once: true, offset: 50, easing: 'ease-out-cubic', duration: 800 });
-            })
-            .catch(console.error);
-    }
-
-    // ----------------------------------------------------
-    // DUMMY DATA FUNCTION (Jab tak aap keys nahi daalte tab tak ye chalega)
-    // ----------------------------------------------------
-    function showDummyData() {
-        const heights = [600, 450, 500, 700, 400, 550, 620, 480];
-        const prices = ["₹4,599", "₹2,899", "₹3,849", "₹6,499"];
-        
-        document.getElementById('grid').innerHTML = heights.map((h, index) => {
-            const randomPrice = prices[Math.floor(Math.random() * prices.length)];
-            return `
-            <div class="card" data-aos="fade-up" data-aos-offset="30">
-                <div class="wishlist-btn">❤</div>
-                <div class="img-box">
-                    <img src="https://placehold.co/400x${h}/FCF9F2/133D35?text=Setup+Contentful+Keys" alt="Indian Wear">
-                </div>
-                <div class="card-overlay">
-                    <span class="price-tag">${randomPrice}</span>
-                    <a href="https://wa.me/919779997768" target="_blank" style="text-decoration: none;">
-                        <span class="buy-now">Buy</span>
-                    </a>
-                </div>
-            </div>
-        `}).join('');
-        
-        // Timeout to let DOM render before AOS init
-        setTimeout(() => { AOS.init({ once: true, offset: 50, easing: 'ease-out-cubic', duration: 800 }); }, 100);
-    }
-
-    // ----------------------------------------------------
     // CHATBOT LOGIC
-    // ----------------------------------------------------
     function toggleChat() { document.getElementById('chatWindow').classList.toggle('active'); }
     function sendMessage() {
         const input = document.getElementById('chatInput');
