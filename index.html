@@ -7,6 +7,7 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/contentful@latest/dist/contentful.browser.min.js"></script>
 
     <style>
         :root { 
@@ -27,6 +28,12 @@
             ::-webkit-scrollbar-thumb:hover { background: var(--green); }
         }
 
+        /* CUSTOM GOLD CURSOR */
+        @media (hover: hover) and (pointer: fine) {
+            body { cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="8" cy="8" r="4" fill="%23C5A059"/></svg>'), auto; }
+            a, button, .card, .wishlist-btn, .chat-btn { cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><circle cx="12" cy="12" r="10" fill="none" stroke="%23133D35" stroke-width="2"/></svg>'), pointer !important; }
+        }
+
         body { 
             background-color: var(--white); 
             color: var(--green); 
@@ -34,36 +41,24 @@
             overflow: hidden; /* Scroll locked until preloader finishes */
         }
 
-        /* --- 1. PURE CSS PRE-LOADER (100% Safe, No Blank Screen) --- */
+        /* --- 1. PURE CSS PRE-LOADER --- */
         #preloader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
             background: var(--white); z-index: 100000;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
         }
-        .preloader-brand {
-            animation: pulseGlow 2s infinite alternate ease-in-out;
-            text-align: center;
-        }
-        .preloader-brand img {
-            height: 100px; width: auto; object-fit: contain; margin-bottom: 10px;
-        }
-        .preloader-text {
-            font-family: 'Playfair Display', serif; font-size: 24px; color: var(--gold); letter-spacing: 2px;
-        }
+        .preloader-brand { animation: pulseGlow 2s infinite alternate ease-in-out; text-align: center; }
+        .preloader-brand img { height: 100px; width: auto; object-fit: contain; margin-bottom: 10px; }
+        .preloader-text { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--gold); letter-spacing: 2px; }
         
         @keyframes pulseGlow {
             0% { transform: scale(0.95); opacity: 0.8; }
             100% { transform: scale(1.05); opacity: 1; filter: drop-shadow(0 0 10px rgba(197, 160, 89, 0.4)); }
         }
 
-        /* Reveal animation for site after preloader */
-        .site-content {
-            opacity: 0; transform: translateY(20px); transition: opacity 1s ease-out, transform 1s ease-out;
-        }
-        .site-content.loaded {
-            opacity: 1; transform: translateY(0);
-        }
+        .site-content { opacity: 0; transform: translateY(20px); transition: opacity 1s ease-out, transform 1s ease-out; }
+        .site-content.loaded { opacity: 1; transform: translateY(0); }
 
         /* --- HEADER --- */
         header {
@@ -90,7 +85,7 @@
         }
         @keyframes shine-sweep { 0% { left: -150%; } 20% { left: 200%; } 100% { left: 200%; } }
 
-        /* --- SEAMLESS MASONRY COLLAGE GRID --- */
+        /* --- MASONRY GRID --- */
         .lookbook-container { max-width: 1600px; margin: 20px auto; padding: 0 15px; column-count: 5; column-gap: 15px; }
         
         .card { 
@@ -125,7 +120,7 @@
 
         /* --- FOOTER --- */
         footer { 
-            background: var(--green); color: var(--white); padding: 60px 20px; text-align: center; border-top: 4px solid var(--gold); margin-top: 40px;
+            background: var(--green); color: var(--white); padding: 60px 20px 30px; text-align: center; border-top: 4px solid var(--gold); margin-top: 40px;
             background-image: url('https://www.transparenttextures.com/patterns/p6.png');
         }
         footer h2 { font-family: 'Playfair Display', serif; font-size: 26px; margin-bottom: 20px; color: var(--gold); text-transform: uppercase; letter-spacing: 1.5px; }
@@ -135,6 +130,14 @@
         .social-btn { padding: 12px 25px; text-decoration: none; font-weight: 600; text-transform: uppercase; font-size: 12px; border-radius: 30px; transition: 0.3s; box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
         .whatsapp { background: #25D366; color: white; border: 2px solid transparent; }
         .instagram { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color: white; border: 2px solid transparent; }
+
+        /* --- DEVELOPER CREDIT --- */
+        .developer-credit {
+            margin-top: 50px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 11px; color: #ccc; letter-spacing: 1.5px; text-transform: uppercase;
+        }
+        .developer-credit a { color: var(--gold); text-decoration: none; font-weight: 600; transition: 0.3s; }
+        .developer-credit a:hover { color: var(--white); text-shadow: 0 0 8px rgba(197, 160, 89, 0.6); }
 
         /* --- FLOATING WHATSAPP & CHATBOT --- */
         .floating-wa {
@@ -206,7 +209,9 @@
             </div>
         </header>
 
-        <div class="lookbook-container" id="grid"></div>
+        <div class="lookbook-container" id="grid">
+            <p style="text-align: center; width: 100%; color: var(--gold); padding: 50px; font-weight: bold;">Loading The Collection...</p>
+        </div>
 
         <footer id="contact-footer">
             <h2>Yashni Creations</h2>
@@ -217,6 +222,10 @@
             <div class="social-buttons">
                 <a href="https://wa.me/919779997768" class="social-btn whatsapp" target="_blank">WhatsApp Group</a>
                 <a href="#" class="social-btn instagram" target="_blank">Instagram</a>
+            </div>
+            
+            <div class="developer-credit">
+                Designed & Developed by <a href="https://skywebsolutions.in/" target="_blank">SkyWeb Solutions</a>
             </div>
         </footer>
 
@@ -243,49 +252,99 @@
 
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
-    // PRELOADER LOGIC (100% Safe)
+    // ----------------------------------------------------
+    // PRELOADER LOGIC
+    // ----------------------------------------------------
     window.addEventListener('load', function() {
-        // Wait 1.5 seconds so user can see the logo pulsing
         setTimeout(function() {
             var preloader = document.getElementById('preloader');
             var mainSite = document.getElementById('mainSite');
-            
-            // Fade out preloader
             preloader.style.opacity = '0';
             preloader.style.visibility = 'hidden';
-            
-            // Fade in site and enable scrolling
             document.body.style.overflow = 'auto';
             mainSite.classList.add('loaded');
-            
-            // Trigger AOS animations after site is revealed
-            setTimeout(function() {
-                AOS.init({ once: true, offset: 50, easing: 'ease-out-cubic', duration: 800 });
-            }, 300);
-            
         }, 1500); 
     });
 
-    // Generate Masonry Grid
-    const heights = [600, 450, 500, 700, 400, 550, 620, 480, 680, 520, 460, 580, 640, 430, 510];
-    const prices = ["₹4,599", "₹2,899", "₹3,849", "₹6,499", "₹1,899", "₹5,200", "₹2,500", "₹3,100"];
-    
-    document.getElementById('grid').innerHTML = heights.map((h, index) => {
-        const randomPrice = prices[Math.floor(Math.random() * prices.length)];
-        return `
-        <div class="card" data-aos="fade-up" data-aos-offset="30">
-            <div class="wishlist-btn">❤</div>
-            <div class="img-box">
-                <img src="https://placehold.co/400x${h}/FCF9F2/133D35?text=Yashni+Style+${index+1}" alt="Indian Wear">
-            </div>
-            <div class="card-overlay">
-                <span class="price-tag">${randomPrice}</span>
-                <span class="buy-now">Buy</span>
-            </div>
-        </div>
-    `}).join('');
+    // ----------------------------------------------------
+    // CONTENTFUL API CONNECTION
+    // ----------------------------------------------------
+    // JAB AAP CONTENTFUL PAR ACCOUNT BANAYENGE, TOH APNI KEYS YAHAN DAALNI HAIN
+    const SPACE_ID = 'YAHAN_APNA_SPACE_ID_DAALEIN'; 
+    const ACCESS_TOKEN = 'YAHAN_APNA_ACCESS_TOKEN_DAALEIN';
 
-    // Chatbot Logic
+    // Agar keys nahi daali hain, toh site crash na ho isliye dummy data dikhayenge
+    if(SPACE_ID === 'YAHAN_APNA_SPACE_ID_DAALEIN') {
+        showDummyData();
+    } else {
+        const client = contentful.createClient({
+            space: SPACE_ID,
+            accessToken: ACCESS_TOKEN
+        });
+
+        // Content_type ka naam wahi hona chahiye jo aapne Contentful mein rakha hai (jaise 'product')
+        client.getEntries({ content_type: 'product' }) 
+            .then((response) => {
+                const products = response.items;
+                const grid = document.getElementById('grid');
+
+                grid.innerHTML = products.map((prod, index) => {
+                    const price = prod.fields.price;
+                    const buyLink = prod.fields.buyLink;
+                    const imageUrl = 'https:' + prod.fields.image.fields.file.url; 
+
+                    return `
+                    <div class="card" data-aos="fade-up" data-aos-offset="30" data-aos-delay="${(index % 5) * 50}">
+                        <div class="wishlist-btn">❤</div>
+                        <div class="img-box">
+                            <img src="${imageUrl}" alt="Yashni Collection">
+                        </div>
+                        <div class="card-overlay">
+                            <span class="price-tag">${price}</span>
+                            <a href="${buyLink}" target="_blank" style="text-decoration: none;">
+                                <span class="buy-now">Buy</span>
+                            </a>
+                        </div>
+                    </div>
+                    `;
+                }).join('');
+
+                AOS.init({ once: true, offset: 50, easing: 'ease-out-cubic', duration: 800 });
+            })
+            .catch(console.error);
+    }
+
+    // ----------------------------------------------------
+    // DUMMY DATA FUNCTION (Jab tak aap keys nahi daalte tab tak ye chalega)
+    // ----------------------------------------------------
+    function showDummyData() {
+        const heights = [600, 450, 500, 700, 400, 550, 620, 480];
+        const prices = ["₹4,599", "₹2,899", "₹3,849", "₹6,499"];
+        
+        document.getElementById('grid').innerHTML = heights.map((h, index) => {
+            const randomPrice = prices[Math.floor(Math.random() * prices.length)];
+            return `
+            <div class="card" data-aos="fade-up" data-aos-offset="30">
+                <div class="wishlist-btn">❤</div>
+                <div class="img-box">
+                    <img src="https://placehold.co/400x${h}/FCF9F2/133D35?text=Setup+Contentful+Keys" alt="Indian Wear">
+                </div>
+                <div class="card-overlay">
+                    <span class="price-tag">${randomPrice}</span>
+                    <a href="https://wa.me/919779997768" target="_blank" style="text-decoration: none;">
+                        <span class="buy-now">Buy</span>
+                    </a>
+                </div>
+            </div>
+        `}).join('');
+        
+        // Timeout to let DOM render before AOS init
+        setTimeout(() => { AOS.init({ once: true, offset: 50, easing: 'ease-out-cubic', duration: 800 }); }, 100);
+    }
+
+    // ----------------------------------------------------
+    // CHATBOT LOGIC
+    // ----------------------------------------------------
     function toggleChat() { document.getElementById('chatWindow').classList.toggle('active'); }
     function sendMessage() {
         const input = document.getElementById('chatInput');
