@@ -24,7 +24,6 @@
             color: var(--green); 
             font-family: 'Montserrat', sans-serif;
             -webkit-font-smoothing: antialiased;
-            /* Extra padding for mobile sticky button */
             padding-bottom: 0; 
         }
 
@@ -89,14 +88,14 @@
         .developer-credit { margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: 2px;}
         .developer-credit a { color: var(--gold); text-decoration: none;}
 
-        /* --- EXTREME MOBILE OPTIMIZATION --- */
+        /* --- MOBILE OPTIMIZATION --- */
         @media (max-width: 900px) {
             .cart-container { flex-direction: column; gap: 20px; }
             .cart-items-section, .order-summary-section { width: 100%; position: relative; top: 0;}
         }
         
         @media (max-width: 600px) { 
-            body { padding-bottom: 70px; /* Space for sticky button */ }
+            body { padding-bottom: 70px; }
             header { padding: 10px 15px; }
             .logo-img { height: 45px; } 
             header a { font-size: 10px; }
@@ -118,7 +117,6 @@
             .summary-row { font-size: 13px; margin-bottom: 10px;}
             .summary-total { font-size: 16px; margin-top: 15px; padding-top: 15px;}
             
-            /* Sticky Bottom Bar for Mobile */
             .checkout-btn {
                 position: fixed;
                 bottom: 0; left: 0; width: 100%;
@@ -135,10 +133,10 @@
 
     <header>
         <div>
-            <a href="index.html">← Shop More</a>
+            <a href="javascript:history.back()">← Shop More</a>
         </div>
         <div class="logo-wrapper">
-            <a href="index.html"><img src="Untitled.jpg" class="logo-img" alt="Yashni Creations"></a>
+            <a href="javascript:history.back()"><img src="Untitled.jpg" class="logo-img" alt="Yashni Creations"></a>
         </div>
         <div style="width: 90px; text-align: right;">
             <span style="font-size: 13px; font-weight: 700; color: var(--green);">🛒 CART</span>
@@ -149,7 +147,6 @@
         
         <div class="cart-items-section">
             <h1 class="cart-header-title">Your Bag</h1>
-            
             <div id="cartItemsContainer">
                 </div>
         </div>
@@ -197,20 +194,21 @@
             let totalAmount = 0;
 
             if (cart.length === 0) {
+                // Empty Cart Back Button Logic Updated
                 container.innerHTML = `
                     <div class="empty-cart-msg">
                         <p>Your shopping bag is empty.</p>
-                        <a href="index.html">Start Shopping</a>
+                        <a href="javascript:history.back()">Start Shopping</a>
                     </div>
                 `;
                 document.getElementById('totalItems').innerText = '0';
                 document.getElementById('subtotalPrice').innerText = '₹0';
                 document.getElementById('totalPrice').innerText = '₹0';
-                document.getElementById('checkoutBtn').style.display = 'none'; // Hide button if cart is empty
+                document.getElementById('checkoutBtn').style.display = 'none'; 
                 return;
             }
 
-            document.getElementById('checkoutBtn').style.display = 'flex'; // Show button
+            document.getElementById('checkoutBtn').style.display = 'flex'; 
 
             cart.forEach((item, index) => {
                 let itemPriceNum = parseInt(item.price.replace(/[^0-9]/g, '')) || 0;
