@@ -280,20 +280,27 @@
                     buttonHtml = `<button onclick="addToCart(this, '${prodId}')" data-title="${safeTitle}" data-price="${price}" data-img="${imageUrl}" class="buy-now">Add to Cart</button>`;
                 }
 
+                // Yahan product.html par link kiya gaya hai
                 return `
                 <div class="card" data-aos="fade-up" data-aos-offset="20" data-aos-delay="${(index % 5) * 50}">
                     <div class="wishlist-btn">❤</div>
-                    <div class="img-box">
-                        <img src="${imageUrl}" alt="${title}" loading="lazy">
-                        <div class="offer-banner">Buy 2 Get 1 Free</div>
-                    </div>
-                    <div class="card-details">
-                        <div class="product-title">${title}</div>
-                        <div class="price-row">
-                            <span class="current-price">${price}</span>
-                            <span class="old-price">${oldPrice}</span>
-                            <span class="discount">35% OFF</span>
+                    
+                    <a href="product.html?id=${prodId}" style="text-decoration: none; color: inherit; display: block; flex-grow: 1;">
+                        <div class="img-box">
+                            <img src="${imageUrl}" alt="${title}" loading="lazy">
+                            <div class="offer-banner">Buy 2 Get 1 Free</div>
                         </div>
+                        <div class="card-details" style="padding-bottom: 0;">
+                            <div class="product-title">${title}</div>
+                            <div class="price-row">
+                                <span class="current-price">${price}</span>
+                                <span class="old-price">${oldPrice}</span>
+                                <span class="discount">35% OFF</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <div class="card-details" style="padding-top: 5px;">
                         <div class="bottom-row">
                             <div class="rating">${rating} <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg></div>
                             ${buttonHtml}
