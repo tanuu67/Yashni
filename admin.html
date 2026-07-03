@@ -149,10 +149,10 @@
     </div>
 
 <script>
-    // --- IMPORTANT: ADD YOUR DETAILS HERE ---
-    const SPACE_ID = 'l2ejwf7j6w9f'; 
-    const ENVIRONMENT_ID = 'master'; // ya 'master' ki jagah aapka specific environment
-    const CMA_TOKEN = 'YOUR_PERSONAL_ACCESS_TOKEN'; // DHYAN DEIN: Ye pehle wale token se alag hai. Contentful me 'Personal Access Tokens' generate karein.
+    // Aapki exact details yahan add kar di gayi hain
+    const SPACE_ID = '7thsqvngkcgx'; 
+    const ENVIRONMENT_ID = 'master'; 
+    const CMA_TOKEN = 'CFPAT-A_Fs9mDq93gKB0gjiCHqEHq3sw5cp3LZQsvsw2rrr08'; 
 
     const client = contentfulManagement.createClient({
         accessToken: CMA_TOKEN
@@ -202,7 +202,7 @@
 
             // Step 3: Create the Product Entry
             statusMsg.innerText = 'Creating Product Entry...';
-            const entry = await environment.createEntry('product', { // Dhyan dein 'product' apka Content Model ID hona chahiye
+            const entry = await environment.createEntry('product', { 
                 fields: {
                     title: { 'en-US': title },
                     price: { 'en-US': price },
