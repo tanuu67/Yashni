@@ -234,12 +234,11 @@
         </div>
     </main>
 
-    <script>window.global = window; window.process = { env: {} };</script>
-    <script src="https://cdn.jsdelivr.net/npm/contentful-management@latest/dist/contentful-management.browser.min.js"></script>
     <script>
         const SPACE_ID = "7thsqvngkcgx";
         const ENVIRONMENT_ID = "main";
-        let client;
+        const API_BASE = `https://api.contentful.com/spaces/${SPACE_ID}/environments/${ENVIRONMENT_ID}`;
+        const UPLOAD_BASE = `https://upload.contentful.com/spaces/${SPACE_ID}`;
         let CMA_TOKEN = "";
 
         function escapeHtml(value) {
@@ -248,11 +247,67 @@
             })[char]);
         }
 
+        function showStatus(message, className) {
+            const statusMsg = document.getElementById("status-message");
+            statusMsg.style.display = "block";
+            statusMsg.textContent = message;
+            statusMsg.className = className || "";
+        }
+
+        function getToken() {
+            CMA_TOKEN = localStorage.getItem("yashni_admin_token") || CMA_TOKEN;
+            if (!CMA_TOKEN) throw new Error("Please log in again before uploading.");
+            return CMA_TOKEN;
+        }
+
+        async function readResponse(response) {
+            const text = await response.text();
+            if (!text) return null;
+            try { return JSON.parse(text); }
+            catch { return { message: text }; }
+        }
+
+        async function cma(path, options = {}) {
+            const headers = {
+                Authorization: `Bearer ${getToken()}`,
+                ...options.headers
+            };
+
+            if (options.body && !headers["Content-Type"] && !(options.body instanceof Blob)) {
+                headers["Content-Type"] = "application/vnd.contentful.management.v1+json";
+            }
+
+            const response = await fetch(`${API_BASE}${path}`, { ...options, headers });
+            const data = await readResponse(response);
+            if (!response.ok) {
+                const message = data && (data.message || data.details || data.name);
+                throw new Error(typeof message === "string" ? message : `Contentful request failed (${response.status}).`);
+            }
+            return data;
+        }
+
+        async function uploadCma(path, file) {
+            const response = await fetch(`${UPLOAD_BASE}${path}`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${getToken()}`,
+                    "Content-Type": file.type || "application/octet-stream"
+                },
+                body: file
+            });
+            const data = await readResponse(response);
+            if (!response.ok) {
+                const message = data && (data.message || data.details || data.name);
+                throw new Error(typeof message === "string" ? message : `Image upload failed (${response.status}).`);
+            }
+            return data;
+        }
+
         function checkLogin() {
             CMA_TOKEN = localStorage.getItem("yashni_admin_token");
             document.getElementById("loginOverlay").style.display = CMA_TOKEN ? "none" : "grid";
             document.getElementById("mainDashboard").style.display = CMA_TOKEN ? "block" : "none";
-            if (CMA_TOKEN) initContentful();
+            if (CMA_TOKEN) fetchAndDisplayProducts();
         }
 
         function saveTokenAndLogin() {
@@ -273,59 +328,16 @@
             location.reload();
         }
 
-        function initContentful() {
-            const productListDiv = document.getElementById("productList");
-            if (typeof contentfulManagement === "undefined") {
-                productListDiv.innerHTML = '<p class="empty-state error">The admin library could not load. Please refresh after checking your connection.</p>';
-                return;
-            }
-            try {
-                client = contentfulManagement.createClient({ accessToken: CMA_TOKEN });
-                fetchAndDisplayProducts();
-            } catch {
-                alert("Invalid secret key format.");
-                logout();
-            }
-        }
-
-        async function getDefaultLocale(environment) {
-            const locales = await environment.getLocales();
+        async function getDefaultLocale() {
+            const locales = await cma("/locales");
             const defaultLocale = locales.items.find((locale) => locale.default);
             return defaultLocale ? defaultLocale.code : "en-US";
-        }
-
-        function showStatus(message, className) {
-            const statusMsg = document.getElementById("status-message");
-            statusMsg.style.display = "block";
-            statusMsg.textContent = message;
-            statusMsg.className = className || "";
-        }
-
-        function ensureClient() {
-            CMA_TOKEN = localStorage.getItem("yashni_admin_token") || CMA_TOKEN;
-            if (!CMA_TOKEN) {
-                throw new Error("Please log in again before uploading.");
-            }
-            if (typeof contentfulManagement === "undefined") {
-                throw new Error("The admin library is still loading or blocked. Refresh the page and try again.");
-            }
-            if (!client) {
-                client = contentfulManagement.createClient({ accessToken: CMA_TOKEN });
-            }
-            return client;
-        }
-
-        async function getEnvironment() {
-            const activeClient = ensureClient();
-            const space = await activeClient.getSpace(SPACE_ID);
-            return space.getEnvironment(ENVIRONMENT_ID);
         }
 
         async function fetchAndDisplayProducts() {
             const productListDiv = document.getElementById("productList");
             try {
-                const environment = await getEnvironment();
-                const entries = await environment.getEntries({ content_type: "product", order: "-sys.createdAt" });
+                const entries = await cma('/entries?content_type=product&order=-sys.createdAt');
 
                 if (!entries.items.length) {
                     productListDiv.innerHTML = '<p class="empty-state">No products found on the website.</p>';
@@ -338,14 +350,9 @@
                     const price = entry.fields.price ? entry.fields.price[locale] : "No price";
                     const entryId = entry.sys.id;
                     const isPublished = Boolean(entry.sys.publishedVersion);
-                    let imageUrl = "https://placehold.co/180x240/f5f0e8/09261d?text=Yashni";
-                    const imageField = entry.fields.image && entry.fields.image[locale];
-                    if (imageField && imageField.fields && imageField.fields.file) {
-                        imageUrl = "https:" + imageField.fields.file.url;
-                    }
                     return `
                         <div class="product-item" id="item-${escapeHtml(entryId)}">
-                            <img class="product-thumb" src="${escapeHtml(imageUrl)}" alt="${escapeHtml(title)}">
+                            <img class="product-thumb" src="https://placehold.co/180x240/f5f0e8/09261d?text=Yashni" alt="${escapeHtml(title)}">
                             <div>
                                 <span class="product-name">${escapeHtml(title)} ${isPublished ? "" : "(Draft)"}</span>
                                 <span class="product-price">${escapeHtml(price)}</span>
@@ -355,13 +362,65 @@
                     `;
                 }).join("");
             } catch (error) {
-                if (error.message && error.message.includes("401")) {
+                if (error.message && /401|Unauthorized|access token/i.test(error.message)) {
                     alert("Unauthorized. The secret key is incorrect.");
                     logout();
                 } else {
                     productListDiv.innerHTML = `<p class="empty-state error">Failed to load products. ${escapeHtml(error.message || "Please try again.")}</p>`;
                 }
             }
+        }
+
+        async function publishResource(type, resource) {
+            return cma(`/${type}/${resource.sys.id}/published`, {
+                method: "PUT",
+                headers: { "X-Contentful-Version": String(resource.sys.version) }
+            });
+        }
+
+        async function waitForProcessedAsset(assetId, localeCode) {
+            for (let attempt = 0; attempt < 18; attempt++) {
+                const asset = await cma(`/assets/${assetId}`);
+                if (asset.fields.file && asset.fields.file[localeCode] && asset.fields.file[localeCode].url) {
+                    return asset;
+                }
+                await new Promise((resolve) => setTimeout(resolve, 1500));
+            }
+            throw new Error("Image processing took too long. Please try again.");
+        }
+
+        async function createAndPublishAsset(title, fileInput, localeCode) {
+            showStatus("Uploading image...", "");
+            const upload = await uploadCma("/uploads", fileInput);
+
+            showStatus("Creating image asset...", "");
+            let asset = await cma("/assets", {
+                method: "POST",
+                body: JSON.stringify({
+                    fields: {
+                        title: { [localeCode]: `${title} Image` },
+                        file: {
+                            [localeCode]: {
+                                contentType: fileInput.type || "application/octet-stream",
+                                fileName: fileInput.name,
+                                uploadFrom: {
+                                    sys: { type: "Link", linkType: "Upload", id: upload.sys.id }
+                                }
+                            }
+                        }
+                    }
+                })
+            });
+
+            showStatus("Processing image...", "");
+            await cma(`/assets/${asset.sys.id}/files/${localeCode}/process`, {
+                method: "PUT",
+                headers: { "X-Contentful-Version": String(asset.sys.version) }
+            });
+
+            asset = await waitForProcessedAsset(asset.sys.id, localeCode);
+            showStatus("Publishing image...", "");
+            return publishResource("assets", asset);
         }
 
         async function deleteProduct(entryId) {
@@ -372,16 +431,23 @@
             btn.disabled = true;
 
             try {
-                const environment = await getEnvironment();
-                const entry = await environment.getEntry(entryId);
-                if (entry.sys.publishedVersion) await entry.unpublish();
-                await entry.delete();
+                let entry = await cma(`/entries/${entryId}`);
+                if (entry.sys.publishedVersion) {
+                    entry = await cma(`/entries/${entryId}/published`, {
+                        method: "DELETE",
+                        headers: { "X-Contentful-Version": String(entry.sys.version) }
+                    });
+                }
+                await cma(`/entries/${entryId}`, {
+                    method: "DELETE",
+                    headers: { "X-Contentful-Version": String(entry.sys.version) }
+                });
                 item.remove();
                 if (!document.querySelector(".product-item")) {
                     document.getElementById("productList").innerHTML = '<p class="empty-state">No products found on the website.</p>';
                 }
-            } catch {
-                alert("Error deleting product. Please try again.");
+            } catch (error) {
+                alert("Error deleting product: " + (error.message || "Please try again."));
                 btn.textContent = "Delete";
                 btn.disabled = false;
             }
@@ -389,7 +455,6 @@
 
         async function startUpload() {
             const btn = document.getElementById("submitBtn");
-            const statusMsg = document.getElementById("status-message");
             const title = document.getElementById("productTitle").value.trim();
             const price = document.getElementById("productPrice").value.trim();
             const description = document.getElementById("productDescription").value.trim();
@@ -402,53 +467,37 @@
 
             btn.disabled = true;
             btn.textContent = "Uploading...";
-            statusMsg.style.display = "block";
-            statusMsg.textContent = "Connecting...";
-            statusMsg.className = "";
+            showStatus("Connecting to Contentful...", "");
 
             try {
-                const environment = await getEnvironment();
-                const localeCode = await getDefaultLocale(environment);
-
-                statusMsg.textContent = "Uploading image...";
-                const asset = await environment.createAssetFromFiles({
-                    fields: {
-                        title: { [localeCode]: title + " Image" },
-                        file: {
-                            [localeCode]: {
-                                contentType: fileInput.type,
-                                fileName: fileInput.name,
-                                file: fileInput
-                            }
-                        }
-                    }
-                });
-
-                statusMsg.textContent = "Processing image...";
-                let processedAsset = await asset.processForAllLocales();
-                processedAsset = await processedAsset.publish();
+                const localeCode = await getDefaultLocale();
+                const asset = await createAndPublishAsset(title, fileInput, localeCode);
 
                 const fields = {
                     title: { [localeCode]: title },
                     price: { [localeCode]: price },
-                    image: { [localeCode]: { sys: { type: "Link", linkType: "Asset", id: processedAsset.sys.id } } }
+                    image: { [localeCode]: { sys: { type: "Link", linkType: "Asset", id: asset.sys.id } } }
                 };
                 if (description) fields.description = { [localeCode]: description };
 
-                statusMsg.textContent = "Creating product...";
-                const entry = await environment.createEntry("product", { fields });
-                await entry.publish();
+                showStatus("Creating product...", "");
+                const entry = await cma("/entries", {
+                    method: "POST",
+                    headers: { "X-Contentful-Content-Type": "product" },
+                    body: JSON.stringify({ fields })
+                });
 
-                statusMsg.textContent = "Product successfully added.";
-                statusMsg.className = "success";
+                showStatus("Publishing product...", "");
+                await publishResource("entries", entry);
+
+                showStatus("Product successfully added.", "success");
                 btn.textContent = "Upload Product";
                 btn.disabled = false;
                 document.getElementById("uploadForm").reset();
                 fetchAndDisplayProducts();
             } catch (error) {
                 alert("Upload failed: " + (error.message || "Please try again."));
-                statusMsg.textContent = "Error uploading product.";
-                statusMsg.className = "error";
+                showStatus("Error uploading product.", "error");
                 btn.textContent = "Try Again";
                 btn.disabled = false;
             }
@@ -458,4 +507,5 @@
     </script>
 </body>
 </html>
+
 
