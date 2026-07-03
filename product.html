@@ -1,3 +1,8 @@
+Bilkul! Maine is `product.html` wale code mein bhi aapki nayi **Space ID** aur **Content Delivery API (CDA) token** update kar diye hain. Ab aapke naye admin panel se upload kiye gaye products ki details is page par bhi ekdum sahi se load hongi.
+
+Yahan aapka updated aur final `product.html` code hai:
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -141,8 +146,10 @@
         if (!prodId) {
             window.location.href = 'index.html'; // Agar ID nahi hai, wapas bhej do
         } else {
-            const SPACE_ID = 'l2ejwf7j6w9f'; 
-            const ACCESS_TOKEN = 'Etivt-wjn21NJojQbh8TOPUBKbcNlwIEhgINXHQQLdE';
+            // --- YAHAN NAYE ACCOUNT KI DETAILS UPDATE KI GAYI HAIN ---
+            const SPACE_ID = '7thsqvngkcgx'; 
+            const ACCESS_TOKEN = 'G3rUWejxwN57qQK2x6RoStstEBb1DQoSKTRavfwHGgg';
+            
             const client = contentful.createClient({ space: SPACE_ID, accessToken: ACCESS_TOKEN });
 
             client.getEntry(prodId)
@@ -210,3 +217,5 @@
     </script>
 </body>
 </html>
+
+```
