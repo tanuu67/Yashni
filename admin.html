@@ -6,7 +6,9 @@
     <title>Yashni Creations | Admin Portal</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/contentful-management@10.46.0/dist/contentful-management.browser.min.js"></script>
+    
+    <!-- YAHAN LINK UPDATE KIYA HAI (UNPKG SERVER - Jo India mein safely chalega) -->
+    <script src="https://unpkg.com/contentful-management@10.46.0/dist/contentful-management.browser.min.js"></script>
 
     <style>
         :root { 
@@ -86,6 +88,7 @@
 </head>
 <body>
 
+    <!-- 1. LOGIN SCREEN -->
     <div id="loginOverlay">
         <div class="login-box">
             <h2>Admin Login</h2>
@@ -97,6 +100,7 @@
         </div>
     </div>
 
+    <!-- 2. MAIN DASHBOARD -->
     <div id="mainDashboard" style="display: none;">
         <div class="admin-card">
             <div class="admin-header">
@@ -134,13 +138,11 @@
     </div>
 
 <script>
-    // Public IDs (Safe for Git)
     const SPACE_ID = '7thsqvngkcgx'; 
     const ENVIRONMENT_ID = 'main'; 
     let client;
     let CMA_TOKEN = '';
 
-    // --- AUTHENTICATION LOGIC ---
     function checkLogin() {
         CMA_TOKEN = localStorage.getItem('yashni_admin_token');
         if (CMA_TOKEN) {
@@ -165,13 +167,12 @@
 
     function logout() {
         localStorage.removeItem('yashni_admin_token');
-        location.reload(); // Refresh to show login screen
+        location.reload(); 
     }
 
-    // --- INITIALIZE CONTENTFUL ---
     function initContentful() {
         if (typeof contentfulManagement === 'undefined') {
-            document.getElementById('productList').innerHTML = '<p style="color:red; text-align:center;">Browser is blocking the scripts! Disable Ad-blocker or run on a live server.</p>';
+            document.getElementById('productList').innerHTML = '<p style="color:red; text-align:center;">Network Error: The system could not load the library. Please try connecting to a different WiFi or mobile data.</p>';
             return;
         }
         try {
@@ -183,7 +184,6 @@
         }
     }
 
-    // --- CORE LOGIC ---
     async function getDefaultLocale(environment) {
         const locales = await environment.getLocales();
         const defaultLocale = locales.items.find(l => l.default);
@@ -223,7 +223,7 @@
             productListDiv.innerHTML = html;
         } catch (error) {
             console.error(error);
-            if (error.message.includes("401")) {
+            if (error.message && error.message.includes("401")) {
                 alert("Unauthorized! The secret key is incorrect.");
                 logout();
             } else {
@@ -321,7 +321,6 @@
         }
     }
 
-    // Page Load Setup
     window.onload = checkLogin;
 </script>
 </body>
