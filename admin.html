@@ -4,337 +4,435 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yashni Creations | Admin Portal</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --green: #09261d; --gold: #D4AF37; --cream: #FAF7F2; 
-            --white: #ffffff; --red: #d3145a;
+        :root {
+            --green: #09261d;
+            --gold: #d4af37;
+            --cream: #faf7f2;
+            --ivory: #fffdf9;
+            --ink: #17221d;
+            --muted: #6f776f;
+            --line: rgba(9, 38, 29, 0.12);
+            --red: #c81e55;
+            --success: #168a52;
+            --shadow: 0 18px 45px rgba(9, 38, 29, 0.10);
         }
-        body { 
-            background-color: var(--cream); color: var(--green); 
-            font-family: 'Montserrat', sans-serif; display: flex;
-            flex-direction: column; align-items: center; padding: 40px 20px;
-            min-height: 100vh; margin: 0; box-sizing: border-box;
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--cream);
+            color: var(--ink);
+            font-family: "Montserrat", Arial, sans-serif;
         }
-        
+        button, input, textarea { font: inherit; }
+        a { color: inherit; }
         #loginOverlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-            background: rgba(9, 38, 29, 0.95); z-index: 9999;
-            display: flex; justify-content: center; align-items: center;
+            position: fixed;
+            inset: 0;
+            z-index: 99;
+            display: grid;
+            place-items: center;
+            padding: 20px;
+            background: rgba(9, 38, 29, 0.94);
         }
-        .login-box {
-            background: var(--white); padding: 40px; border-radius: 12px;
-            width: 100%; max-width: 400px; text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        .login-box, .admin-card {
+            width: 100%;
+            background: var(--ivory);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
         }
-        .login-box h2 { font-family: 'Playfair Display', serif; color: var(--green); margin-bottom: 20px; }
-        .login-box p { font-size: 12px; color: #666; margin-bottom: 20px; line-height: 1.5; }
-        
-        #mainDashboard { display: none; width: 100%; flex-direction: column; align-items: center; }
-
-        .admin-card {
-            background: var(--white); padding: 30px; border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 100%; max-width: 550px;
-            border: 1px solid rgba(9, 38, 29, 0.1); margin-bottom: 30px; position: relative;
+        .login-box { max-width: 420px; padding: 34px; text-align: center; }
+        .login-box h2, .admin-header h1, .admin-header h2 {
+            margin: 0;
+            font-family: "Playfair Display", Georgia, serif;
+            color: var(--green);
         }
-        .admin-header { text-align: center; margin-bottom: 25px; }
-        .admin-header h1 { font-family: 'Playfair Display', serif; color: var(--gold); font-size: 24px; margin-bottom: 5px; }
-        .admin-header h2 { font-family: 'Playfair Display', serif; color: var(--green); font-size: 20px; margin-bottom: 5px; }
-        .admin-header p { font-size: 12px; color: #666; }
-        
-        .logout-btn {
-            position: absolute; top: 15px; right: 15px; font-size: 11px; padding: 6px 12px;
-            background: #f1f1f1; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; color: #333;
-            font-weight: 600; text-transform: uppercase; transition: 0.3s;
+        .login-box p, .admin-header p { color: var(--muted); font-size: 13px; line-height: 1.6; }
+        #mainDashboard {
+            display: none;
+            width: min(1120px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 34px 0 58px;
         }
-        .logout-btn:hover { background: var(--red); color: white; border-color: var(--red); }
-
-        .form-group { margin-bottom: 15px; text-align: left; }
-        .form-group label { display: block; font-size: 11px; font-weight: 600; margin-bottom: 6px; text-transform: uppercase; }
-        .form-group input {
-            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px;
-            font-family: 'Montserrat', sans-serif; font-size: 13px; box-sizing: border-box; transition: border-color 0.3s;
+        .dashboard-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            margin-bottom: 22px;
         }
-        .form-group input:focus { outline: none; border-color: var(--gold); }
+        .brand-title h1 {
+            margin: 0;
+            color: var(--green);
+            font-family: "Playfair Display", Georgia, serif;
+            font-size: clamp(30px, 5vw, 48px);
+        }
+        .brand-title p { margin: 8px 0 0; color: var(--muted); }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: minmax(320px, 0.85fr) minmax(0, 1fr);
+            gap: 22px;
+            align-items: start;
+        }
+        .admin-card { padding: clamp(20px, 3vw, 30px); }
+        .admin-header { margin-bottom: 22px; }
+        .admin-header h1 { color: var(--gold); font-size: 26px; }
+        .admin-header h2 { font-size: 24px; }
+        .form-group { margin-bottom: 16px; }
+        label {
+            display: block;
+            margin-bottom: 7px;
+            color: var(--green);
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        input, textarea {
+            width: 100%;
+            border: 1px solid var(--line);
+            border-radius: 4px;
+            background: white;
+            color: var(--ink);
+            padding: 12px;
+            outline: none;
+        }
+        textarea { min-height: 112px; resize: vertical; line-height: 1.6; }
+        input:focus, textarea:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.16); }
+        .submit-btn, .logout-btn, .delete-btn {
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
         .submit-btn {
-            background: var(--green); color: var(--white); width: 100%; padding: 14px;
-            border: none; border-radius: 6px; font-size: 13px; font-weight: 700;
-            text-transform: uppercase; cursor: pointer; transition: all 0.3s ease;
+            width: 100%;
+            min-height: 46px;
+            border: 0;
+            background: var(--green);
+            color: white;
         }
         .submit-btn:hover { background: var(--gold); color: var(--green); }
-        .submit-btn:disabled { background: #ccc; color: #666; cursor: not-allowed; }
-        
-        #status-message { margin-top: 15px; text-align: center; font-size: 13px; font-weight: 500; display: none; }
-        .success { color: #25D366; }
-        .error { color: var(--red); }
-        
-        .product-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 0; border-bottom: 1px solid #eee; text-align: left;
+        .submit-btn:disabled { background: #c7c7c7; color: #666; cursor: not-allowed; }
+        .logout-btn {
+            border: 1px solid var(--line);
+            background: var(--ivory);
+            color: var(--green);
+            padding: 11px 14px;
         }
-        .product-item:last-child { border-bottom: none; }
-        .product-info { display: flex; flex-direction: column; gap: 4px; }
-        .product-name { font-size: 13px; font-weight: 600; color: var(--green); }
-        .product-price { font-size: 11px; color: #888; }
+        .logout-btn:hover { border-color: var(--red); color: var(--red); }
+        #status-message, #login-error {
+            display: none;
+            margin-top: 14px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .success { color: var(--success); }
+        .error { color: var(--red); }
+        .product-item {
+            display: grid;
+            grid-template-columns: 72px minmax(0, 1fr) auto;
+            gap: 14px;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--line);
+        }
+        .product-item:last-child { border-bottom: 0; }
+        .product-thumb {
+            width: 72px;
+            aspect-ratio: 3 / 4;
+            object-fit: cover;
+            border-radius: 4px;
+            background: #eee9e0;
+        }
+        .product-name { display: block; color: var(--green); font-size: 14px; font-weight: 800; line-height: 1.35; }
+        .product-price { display: block; margin-top: 5px; color: var(--muted); font-size: 12px; }
         .delete-btn {
-            background: #fff; color: var(--red); border: 1px solid var(--red);
-            padding: 6px 12px; border-radius: 4px; font-size: 11px; font-weight: 600;
-            cursor: pointer; transition: 0.3s; text-transform: uppercase;
+            border: 1px solid var(--red);
+            background: white;
+            color: var(--red);
+            padding: 9px 12px;
         }
         .delete-btn:hover { background: var(--red); color: white; }
+        .empty-state { color: var(--muted); text-align: center; font-size: 13px; padding: 28px 0; }
+        @media (max-width: 840px) {
+            .dashboard-top { align-items: flex-start; flex-direction: column; }
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .product-item { grid-template-columns: 58px minmax(0, 1fr); }
+            .product-thumb { width: 58px; }
+            .delete-btn { grid-column: 2; justify-self: start; }
+        }
     </style>
 </head>
 <body>
-
     <div id="loginOverlay">
         <div class="login-box">
             <h2>Admin Login</h2>
-            <p>Please enter your Secret Key to access the dashboard. This keeps your website secure.</p>
+            <p>Enter your Contentful management token to update products on the website.</p>
             <div class="form-group">
-                <input type="password" id="secretKeyInput" placeholder="Enter Secret Key (CMA Token)">
+                <input type="password" id="secretKeyInput" placeholder="Secret key">
             </div>
-            <button class="submit-btn" onclick="saveTokenAndLogin()">Unlock Dashboard</button>
-            <div id="login-error" style="color: var(--red); font-size: 12px; margin-top: 15px; display: none;"></div>
+            <button class="submit-btn" type="button" onclick="saveTokenAndLogin()">Unlock Dashboard</button>
+            <div id="login-error" class="error"></div>
         </div>
     </div>
 
-    <div id="mainDashboard">
-        <div class="admin-card">
-            <button class="logout-btn" onclick="logout()">Logout ✖</button>
-            <div class="admin-header">
+    <main id="mainDashboard">
+        <div class="dashboard-top">
+            <div class="brand-title">
                 <h1>Yashni Creations</h1>
-                <p>Upload New Product to Website</p>
+                <p>Upload, review, and remove live products.</p>
             </div>
-            <form id="uploadForm" onsubmit="return false;"> 
-                <div class="form-group">
-                    <label for="productTitle">Product Name</label>
-                    <input type="text" id="productTitle" placeholder="e.g. Royal Emerald Lehenga" required>
-                </div>
-                <div class="form-group">
-                    <label for="productPrice">Price (in ₹)</label>
-                    <input type="text" id="productPrice" placeholder="e.g. ₹4,500" required>
-                </div>
-                <div class="form-group">
-                    <label for="productImage">Product Image (File)</label>
-                    <input type="file" id="productImage" accept="image/*" required>
-                </div>
-                <button type="button" id="submitBtn" class="submit-btn" onclick="startUpload()">Upload Product</button>
-                <div id="status-message"></div>
-            </form>
+            <button class="logout-btn" type="button" onclick="logout()">Logout &#10005;</button>
         </div>
 
-        <div class="admin-card">
-            <div class="admin-header">
-                <h2>Manage Live Products</h2>
-                <p>Delete products you no longer want to sell</p>
-            </div>
-            <div id="productList">
-                <p style="text-align: center; font-size: 12px; color: #888;">Loading your products...</p>
-            </div>
+        <div class="dashboard-grid">
+            <section class="admin-card">
+                <div class="admin-header">
+                    <h1>New Product</h1>
+                    <p>Add a product to the live collection.</p>
+                </div>
+                <form id="uploadForm" onsubmit="return false;">
+                    <div class="form-group">
+                        <label for="productTitle">Product Name</label>
+                        <input type="text" id="productTitle" placeholder="Royal Emerald Lehenga" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productPrice">Price</label>
+                        <input type="text" id="productPrice" placeholder="Rs. 4,500" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productDescription">Description</label>
+                        <textarea id="productDescription" placeholder="Fabric, work, fit, and care details"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="productImage">Product Image</label>
+                        <input type="file" id="productImage" accept="image/*" required>
+                    </div>
+                    <button type="button" id="submitBtn" class="submit-btn" onclick="startUpload()">Upload Product</button>
+                    <div id="status-message"></div>
+                </form>
+            </section>
+
+            <section class="admin-card">
+                <div class="admin-header">
+                    <h2>Live Products</h2>
+                    <p>Remove products that should no longer appear on the storefront.</p>
+                </div>
+                <div id="productList">
+                    <p class="empty-state">Loading products...</p>
+                </div>
+            </section>
         </div>
-    </div>
+    </main>
 
-<script>
-    window.global = window;
-    window.process = { env: {} };
-</script>
+    <script>window.global = window; window.process = { env: {} };</script>
+    <script src="https://cdn.jsdelivr.net/npm/contentful-management@latest/dist/contentful-management.browser.min.js"></script>
+    <script>
+        const SPACE_ID = "7thsqvngkcgx";
+        const ENVIRONMENT_ID = "main";
+        let client;
+        let CMA_TOKEN = "";
 
-<script src="https://cdn.jsdelivr.net/npm/contentful-management@latest/dist/contentful-management.browser.min.js"></script>
-
-<script>
-    const SPACE_ID = '7thsqvngkcgx'; 
-    const ENVIRONMENT_ID = 'main'; 
-    let client;
-    let CMA_TOKEN = '';
-
-    function checkLogin() {
-        CMA_TOKEN = localStorage.getItem('yashni_admin_token');
-        if (CMA_TOKEN) {
-            document.getElementById('loginOverlay').style.display = 'none';
-            document.getElementById('mainDashboard').style.display = 'flex';
-            initContentful();
-        } else {
-            document.getElementById('loginOverlay').style.display = 'flex';
-            document.getElementById('mainDashboard').style.display = 'none';
+        function escapeHtml(value) {
+            return String(value).replace(/[&<>"']/g, (char) => ({
+                "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+            })[char]);
         }
-    }
 
-    function saveTokenAndLogin() {
-        const inputVal = document.getElementById('secretKeyInput').value.trim();
-        const errorDiv = document.getElementById('login-error');
-        if (!inputVal) {
-            errorDiv.innerText = "Please enter the secret key!";
-            errorDiv.style.display = 'block';
-            return;
+        function checkLogin() {
+            CMA_TOKEN = localStorage.getItem("yashni_admin_token");
+            document.getElementById("loginOverlay").style.display = CMA_TOKEN ? "none" : "grid";
+            document.getElementById("mainDashboard").style.display = CMA_TOKEN ? "block" : "none";
+            if (CMA_TOKEN) initContentful();
         }
-        errorDiv.style.display = 'none';
-        localStorage.setItem('yashni_admin_token', inputVal);
-        checkLogin();
-    }
 
-    function logout() {
-        localStorage.removeItem('yashni_admin_token');
-        location.reload(); 
-    }
-
-    function initContentful() {
-        const productListDiv = document.getElementById('productList');
-        
-        if (typeof contentfulManagement === 'undefined') {
-            productListDiv.innerHTML = '<p style="color:red; text-align:center;">Network Error: The system could not load the library.<br>Please disable your Ad-Blocker/Antivirus and refresh.</p>';
-            return;
+        function saveTokenAndLogin() {
+            const inputVal = document.getElementById("secretKeyInput").value.trim();
+            const errorDiv = document.getElementById("login-error");
+            if (!inputVal) {
+                errorDiv.textContent = "Please enter the secret key.";
+                errorDiv.style.display = "block";
+                return;
+            }
+            errorDiv.style.display = "none";
+            localStorage.setItem("yashni_admin_token", inputVal);
+            checkLogin();
         }
-        
-        try {
-            client = contentfulManagement.createClient({ accessToken: CMA_TOKEN });
-            fetchAndDisplayProducts();
-        } catch (e) {
-            alert("Invalid Token Format. Please check your Secret Key.");
-            logout();
+
+        function logout() {
+            localStorage.removeItem("yashni_admin_token");
+            location.reload();
         }
-    }
 
-    async function getDefaultLocale(environment) {
-        const locales = await environment.getLocales();
-        const defaultLocale = locales.items.find(l => l.default);
-        return defaultLocale ? defaultLocale.code : 'en-US';
-    }
+        function initContentful() {
+            const productListDiv = document.getElementById("productList");
+            if (typeof contentfulManagement === "undefined") {
+                productListDiv.innerHTML = '<p class="empty-state error">The admin library could not load. Please refresh after checking your connection.</p>';
+                return;
+            }
+            try {
+                client = contentfulManagement.createClient({ accessToken: CMA_TOKEN });
+                fetchAndDisplayProducts();
+            } catch {
+                alert("Invalid secret key format.");
+                logout();
+            }
+        }
 
-    async function fetchAndDisplayProducts() {
-        const productListDiv = document.getElementById('productList');
-        try {
+        async function getDefaultLocale(environment) {
+            const locales = await environment.getLocales();
+            const defaultLocale = locales.items.find((locale) => locale.default);
+            return defaultLocale ? defaultLocale.code : "en-US";
+        }
+
+        async function getEnvironment() {
             const space = await client.getSpace(SPACE_ID);
-            const environment = await space.getEnvironment(ENVIRONMENT_ID);
-            const entries = await environment.getEntries({ content_type: 'product' });
+            return space.getEnvironment(ENVIRONMENT_ID);
+        }
 
-            if(entries.items.length === 0) {
-                productListDiv.innerHTML = '<p style="text-align:center; font-size:12px; color:#888;">No products found on the website.</p>';
+        async function fetchAndDisplayProducts() {
+            const productListDiv = document.getElementById("productList");
+            try {
+                const environment = await getEnvironment();
+                const entries = await environment.getEntries({ content_type: "product", order: "-sys.createdAt" });
+
+                if (!entries.items.length) {
+                    productListDiv.innerHTML = '<p class="empty-state">No products found on the website.</p>';
+                    return;
+                }
+
+                productListDiv.innerHTML = entries.items.map((entry) => {
+                    const locale = Object.keys(entry.fields.title || {})[0] || "en-US";
+                    const title = entry.fields.title ? entry.fields.title[locale] : "Unnamed Product";
+                    const price = entry.fields.price ? entry.fields.price[locale] : "No price";
+                    const entryId = entry.sys.id;
+                    const isPublished = Boolean(entry.sys.publishedVersion);
+                    let imageUrl = "https://placehold.co/180x240/f5f0e8/09261d?text=Yashni";
+                    const imageField = entry.fields.image && entry.fields.image[locale];
+                    if (imageField && imageField.fields && imageField.fields.file) {
+                        imageUrl = "https:" + imageField.fields.file.url;
+                    }
+                    return `
+                        <div class="product-item" id="item-${escapeHtml(entryId)}">
+                            <img class="product-thumb" src="${escapeHtml(imageUrl)}" alt="${escapeHtml(title)}">
+                            <div>
+                                <span class="product-name">${escapeHtml(title)} ${isPublished ? "" : "(Draft)"}</span>
+                                <span class="product-price">${escapeHtml(price)}</span>
+                            </div>
+                            <button class="delete-btn" type="button" onclick="deleteProduct('${escapeHtml(entryId)}')">Delete</button>
+                        </div>
+                    `;
+                }).join("");
+            } catch (error) {
+                if (error.message && error.message.includes("401")) {
+                    alert("Unauthorized. The secret key is incorrect.");
+                    logout();
+                } else {
+                    productListDiv.innerHTML = `<p class="empty-state error">Failed to load products. ${escapeHtml(error.message || "Please try again.")}</p>`;
+                }
+            }
+        }
+
+        async function deleteProduct(entryId) {
+            if (!confirm("Delete this product from the website?")) return;
+            const item = document.getElementById(`item-${entryId}`);
+            const btn = item.querySelector(".delete-btn");
+            btn.textContent = "Deleting...";
+            btn.disabled = true;
+
+            try {
+                const environment = await getEnvironment();
+                const entry = await environment.getEntry(entryId);
+                if (entry.sys.publishedVersion) await entry.unpublish();
+                await entry.delete();
+                item.remove();
+                if (!document.querySelector(".product-item")) {
+                    document.getElementById("productList").innerHTML = '<p class="empty-state">No products found on the website.</p>';
+                }
+            } catch {
+                alert("Error deleting product. Please try again.");
+                btn.textContent = "Delete";
+                btn.disabled = false;
+            }
+        }
+
+        async function startUpload() {
+            const btn = document.getElementById("submitBtn");
+            const statusMsg = document.getElementById("status-message");
+            const title = document.getElementById("productTitle").value.trim();
+            const price = document.getElementById("productPrice").value.trim();
+            const description = document.getElementById("productDescription").value.trim();
+            const fileInput = document.getElementById("productImage").files[0];
+
+            if (!title || !price || !fileInput) {
+                alert("Please fill product name, price, and image.");
                 return;
             }
 
-            let html = '';
-            entries.items.forEach(entry => {
-                const locale = Object.keys(entry.fields.title || {})[0] || 'en-US';
-                const title = entry.fields.title ? entry.fields.title[locale] : 'Unnamed Product';
-                const price = entry.fields.price ? entry.fields.price[locale] : 'No Price';
-                const entryId = entry.sys.id;
-                const isPublished = !!entry.sys.publishedVersion; 
+            btn.disabled = true;
+            btn.textContent = "Uploading...";
+            statusMsg.style.display = "block";
+            statusMsg.textContent = "Connecting...";
+            statusMsg.className = "";
 
-                html += `
-                    <div class="product-item" id="item-${entryId}">
-                        <div class="product-info">
-                            <span class="product-name">${title} ${!isPublished ? '(Draft)' : ''}</span>
-                            <span class="product-price">${price}</span>
-                        </div>
-                        <button class="delete-btn" onclick="deleteProduct('${entryId}')">Delete</button>
-                    </div>
-                `;
-            });
-            productListDiv.innerHTML = html;
-        } catch (error) {
-            console.error(error);
-            if (error.message && error.message.includes("401")) {
-                alert("Unauthorized! The secret key is incorrect.");
-                logout();
-            } else {
-                productListDiv.innerHTML = `<p style="text-align:center; font-size:12px; color:red;">Failed to load products. ${error.message}</p>`;
-            }
-        }
-    }
+            try {
+                const environment = await getEnvironment();
+                const localeCode = await getDefaultLocale(environment);
 
-    async function deleteProduct(entryId) {
-        if (!confirm("Are you sure you want to delete this product?")) return;
-        const btn = document.querySelector(`#item-${entryId} .delete-btn`);
-        btn.innerText = "Deleting..."; btn.disabled = true;
-
-        try {
-            const space = await client.getSpace(SPACE_ID);
-            const environment = await space.getEnvironment(ENVIRONMENT_ID);
-            const entry = await environment.getEntry(entryId);
-            
-            if (entry.sys.publishedVersion) await entry.unpublish();
-            await entry.delete();
-            
-            document.getElementById(`item-${entryId}`).remove();
-            if (document.querySelectorAll('.product-item').length === 0) {
-                document.getElementById('productList').innerHTML = '<p style="text-align:center; font-size:12px; color:#888;">No products found on the website.</p>';
-            }
-        } catch (error) {
-            alert("Error deleting product.");
-            btn.innerText = "Delete"; btn.disabled = false;
-        }
-    }
-
-    async function startUpload() {
-        const btn = document.getElementById('submitBtn');
-        const statusMsg = document.getElementById('status-message');
-        const title = document.getElementById('productTitle').value;
-        const price = document.getElementById('productPrice').value;
-        const fileInput = document.getElementById('productImage').files[0];
-
-        if(!title || !price || !fileInput) { alert("Fill all fields!"); return; }
-
-        btn.disabled = true;
-        btn.innerText = 'Uploading... Please wait';
-        statusMsg.style.display = 'block';
-        statusMsg.innerText = 'Connecting...';
-        statusMsg.className = '';
-
-        try {
-            const space = await client.getSpace(SPACE_ID);
-            const environment = await space.getEnvironment(ENVIRONMENT_ID);
-            const localeCode = await getDefaultLocale(environment);
-
-            statusMsg.innerText = 'Uploading Image...';
-            const asset = await environment.createAssetFromFiles({
-                fields: {
-                    title: { [localeCode]: title + ' Image' },
-                    file: {
-                        [localeCode]: {
-                            contentType: fileInput.type,
-                            fileName: fileInput.name,
-                            file: fileInput
+                statusMsg.textContent = "Uploading image...";
+                const asset = await environment.createAssetFromFiles({
+                    fields: {
+                        title: { [localeCode]: title + " Image" },
+                        file: {
+                            [localeCode]: {
+                                contentType: fileInput.type,
+                                fileName: fileInput.name,
+                                file: fileInput
+                            }
                         }
                     }
-                }
-            });
+                });
 
-            statusMsg.innerText = 'Processing Image...';
-            let processedAsset = await asset.processForAllLocales();
-            processedAsset = await processedAsset.publish(); 
+                statusMsg.textContent = "Processing image...";
+                let processedAsset = await asset.processForAllLocales();
+                processedAsset = await processedAsset.publish();
 
-            statusMsg.innerText = 'Creating Product...';
-            const entry = await environment.createEntry('product', { 
-                fields: {
+                const fields = {
                     title: { [localeCode]: title },
                     price: { [localeCode]: price },
-                    image: { [localeCode]: { sys: { type: 'Link', linkType: 'Asset', id: processedAsset.sys.id } } }
-                }
-            });
+                    image: { [localeCode]: { sys: { type: "Link", linkType: "Asset", id: processedAsset.sys.id } } }
+                };
+                if (description) fields.description = { [localeCode]: description };
 
-            await entry.publish();
+                statusMsg.textContent = "Creating product...";
+                const entry = await environment.createEntry("product", { fields });
+                await entry.publish();
 
-            statusMsg.innerText = '✅ Product successfully added!';
-            statusMsg.className = 'success';
-            btn.innerText = 'Upload Product';
-            btn.disabled = false;
-            document.getElementById('uploadForm').reset();
-            
-            fetchAndDisplayProducts();
-
-        } catch (error) {
-            alert("Upload Failed! Error: " + error.message);
-            statusMsg.innerText = '❌ Error uploading.';
-            statusMsg.className = 'error';
-            btn.innerText = 'Try Again';
-            btn.disabled = false;
+                statusMsg.textContent = "Product successfully added.";
+                statusMsg.className = "success";
+                btn.textContent = "Upload Product";
+                btn.disabled = false;
+                document.getElementById("uploadForm").reset();
+                fetchAndDisplayProducts();
+            } catch (error) {
+                alert("Upload failed: " + (error.message || "Please try again."));
+                statusMsg.textContent = "Error uploading product.";
+                statusMsg.className = "error";
+                btn.textContent = "Try Again";
+                btn.disabled = false;
+            }
         }
-    }
 
-    // App start hone par chalega
-    window.onload = checkLogin;
-</script>
+        window.onload = checkLogin;
+    </script>
 </body>
 </html>
