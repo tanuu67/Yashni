@@ -294,8 +294,30 @@
             return defaultLocale ? defaultLocale.code : "en-US";
         }
 
+        function showStatus(message, className) {
+            const statusMsg = document.getElementById("status-message");
+            statusMsg.style.display = "block";
+            statusMsg.textContent = message;
+            statusMsg.className = className || "";
+        }
+
+        function ensureClient() {
+            CMA_TOKEN = localStorage.getItem("yashni_admin_token") || CMA_TOKEN;
+            if (!CMA_TOKEN) {
+                throw new Error("Please log in again before uploading.");
+            }
+            if (typeof contentfulManagement === "undefined") {
+                throw new Error("The admin library is still loading or blocked. Refresh the page and try again.");
+            }
+            if (!client) {
+                client = contentfulManagement.createClient({ accessToken: CMA_TOKEN });
+            }
+            return client;
+        }
+
         async function getEnvironment() {
-            const space = await client.getSpace(SPACE_ID);
+            const activeClient = ensureClient();
+            const space = await activeClient.getSpace(SPACE_ID);
             return space.getEnvironment(ENVIRONMENT_ID);
         }
 
@@ -432,7 +454,8 @@
             }
         }
 
-        window.onload = checkLogin;
+        window.addEventListener("load", checkLogin);
     </script>
 </body>
 </html>
+
