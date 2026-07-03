@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yashni Creations | Admin Portal</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/contentful-management@10.46.0/dist/contentful-management.browser.min.js"></script>
+
+    <style>
+        :root { 
+            --green: #09261d; 
+            --gold: #D4AF37;  
+            --cream: #FAF7F2; 
+            --white: #ffffff; 
+        }
+
+        body { 
+            background-color: var(--cream); 
+            color: var(--green); 
+            font-family: 'Montserrat', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .admin-card {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid rgba(9, 38, 29, 0.1);
+        }
+
+        .admin-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .admin-header h1 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .admin-header p {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .submit-btn {
+            background: var(--green);
+            color: var(--white);
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background: var(--gold);
+            color: var(--green);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        #status-message {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .success { color: #25D366; }
+        .error { color: #d3145a; }
+    </style>
+</head>
+<body>
+
+    <div class="admin-card">
+        <div class="admin-header">
+            <h1>Yashni Creations</h1>
+            <p>Upload New Product to Website</p>
+        </div>
+
+        <form id="uploadForm">
+            <div class="form-group">
+                <label for="productTitle">Product Name</label>
+                <input type="text" id="productTitle" placeholder="e.g. Royal Emerald Lehenga" required>
+            </div>
+
+            <div class="form-group">
+                <label for="productPrice">Price (in ₹)</label>
+                <input type="text" id="productPrice" placeholder="e.g. ₹4,500" required>
+            </div>
+
+            <div class="form-group">
+                <label for="productImage">Product Image (File)</label>
+                <input type="file" id="productImage" accept="image/*" required>
+            </div>
+
+            <button type="submit" id="submitBtn" class="submit-btn">Upload Product</button>
+            <div id="status-message"></div>
+        </form>
+    </div>
+
+<script>
+    // --- IMPORTANT: ADD YOUR DETAILS HERE ---
+    const SPACE_ID = 'l2ejwf7j6w9f'; 
+    const ENVIRONMENT_ID = 'master'; // ya 'master' ki jagah aapka specific environment
+    const CMA_TOKEN = 'YOUR_PERSONAL_ACCESS_TOKEN'; // DHYAN DEIN: Ye pehle wale token se alag hai. Contentful me 'Personal Access Tokens' generate karein.
+
+    const client = contentfulManagement.createClient({
+        accessToken: CMA_TOKEN
+    });
+
+    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const btn = document.getElementById('submitBtn');
+        const statusMsg = document.getElementById('status-message');
+        const title = document.getElementById('productTitle').value;
+        const price = document.getElementById('productPrice').value;
+        const fileInput = document.getElementById('productImage').files[0];
+
+        btn.disabled = true;
+        btn.innerText = 'Uploading... Please wait';
+        statusMsg.style.display = 'block';
+        statusMsg.innerText = '';
+
+        try {
+            const space = await client.getSpace(SPACE_ID);
+            const environment = await space.getEnvironment(ENVIRONMENT_ID);
+
+            // Step 1: Upload the Image File
+            statusMsg.innerText = 'Uploading Image...';
+            statusMsg.className = '';
+            
+            const asset = await environment.createAssetFromFiles({
+                fields: {
+                    title: {
+                        'en-US': title + ' Image'
+                    },
+                    file: {
+                        'en-US': {
+                            contentType: fileInput.type,
+                            fileName: fileInput.name,
+                            file: fileInput
+                        }
+                    }
+                }
+            });
+
+            // Step 2: Process the Asset
+            statusMsg.innerText = 'Processing Image...';
+            let processedAsset = await asset.processForAllLocales();
+            processedAsset = await processedAsset.publish(); // Publish the image
+
+            // Step 3: Create the Product Entry
+            statusMsg.innerText = 'Creating Product Entry...';
+            const entry = await environment.createEntry('product', { // Dhyan dein 'product' apka Content Model ID hona chahiye
+                fields: {
+                    title: { 'en-US': title },
+                    price: { 'en-US': price },
+                    image: {
+                        'en-US': {
+                            sys: {
+                                type: 'Link',
+                                linkType: 'Asset',
+                                id: processedAsset.sys.id
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Step 4: Publish the Entry
+            await entry.publish();
+
+            // Success!
+            statusMsg.innerText = '✅ Product successfully added to website!';
+            statusMsg.className = 'success';
+            btn.innerText = 'Upload Product';
+            btn.disabled = false;
+            document.getElementById('uploadForm').reset();
+
+        } catch (error) {
+            console.error(error);
+            statusMsg.innerText = '❌ Error uploading product. Check console.';
+            statusMsg.className = 'error';
+            btn.innerText = 'Try Again';
+            btn.disabled = false;
+        }
+    });
+</script>
+</body>
+</html>
